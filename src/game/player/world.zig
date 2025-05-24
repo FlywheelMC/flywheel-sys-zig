@@ -29,6 +29,12 @@ pub const World = struct {
         flywheel_world_mark_ready(self.session_id, chunk.x, chunk.z);
     }
 
+    pub fn set(self : *const World, pos : BlockPos, block : anytype) void {
+        var b = self.batch_set(default_allocator);
+        b.put(pos, block);
+        b.submit();
+    }
+
     pub inline fn batch_set(self : *const World, allocator : Allocator) BatchSet {
         return BatchSet {
             .session_id = self.session_id,

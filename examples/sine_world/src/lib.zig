@@ -37,7 +37,11 @@ fn player_joined(player : Player) void {
 const SINE_FREQ : f32 = 0.0625;
 const SIME_AMP  : f32 = 5.0;
 fn load_chunk(player : Player, chunk : ChunkPos) void {
+    defer player.world.mark_ready(chunk);
+
     var batch = player.world.batch_set(allocator);
+    defer batch.submit();
+
     const min = chunk.min_block();
     for (0..16) |dx| {
         for (0..16) |dz| {
@@ -53,6 +57,4 @@ fn load_chunk(player : Player, chunk : ChunkPos) void {
             }
         }
     }
-    batch.submit();
-    player.world.mark_ready(chunk);
 }
