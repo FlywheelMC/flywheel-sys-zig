@@ -7,6 +7,8 @@ const allocator = @import("alloc.zig").allocator;
 const Player    = @import("../game/player/mod.zig").Player;
 const ChunkPos  = @import("../game/data.zig").ChunkPos;
 
+const task_private = @import("../task/private.zig");
+
 
 extern fn flywheel_refuel() void;
 extern fn flywheel_next_event(out_id_ptr : u32, out_id_len : u32, out_args_ptr : u32, out_args_len : u32) u32;
@@ -61,6 +63,9 @@ pub const App = struct {
 
 
     pub fn run(self : *App) void {
+        task_private.init();
+        defer task_private.deinit();
+
         for (self.callback_on_start.items) |f| { f(); }
         while (true) {
             const maybe_event = App.read_event();
@@ -84,7 +89,11 @@ pub const App = struct {
                     const x          = mem.readInt(i32, event.args[8..12], .little);
                     const z          = mem.readInt(i32, event.args[12..16], .little);
                     const pos        = ChunkPos.new(x, z);
-                    for (self.callback_on_world_chunk_loading.items) |f| { f(player, pos); }
+                    if (self.callback_on_world_chunk_loading.items.len == 0) {
+                        player.world.mark_ready(pos);
+                    } else {
+                        for (self.callback_on_world_chunk_loading.items) |f| { f(player, pos); }
+                    }
                 }
                 else if (mem.eql(u8, event.id, "flywheel_world_chunk_unloaded")) {
                     const session_id = mem.readInt(u64, event.args[0..8], .little);
@@ -98,6 +107,7 @@ pub const App = struct {
                 allocator.free(event.id);
                 allocator.free(event.args);
             }
+            task_private.run_queued_tasks();
         }
     }
 

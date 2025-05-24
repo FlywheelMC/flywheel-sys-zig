@@ -5,6 +5,7 @@ const allocPrint = std.fmt.allocPrint;
 const panic      = std.debug.panic;
 
 const allocator     = @import("../../internal/alloc.zig").allocator;
+const Duration      = @import("../../time.zig").Duration;
 const SoundCategory = @import("../data.zig").SoundCategory;
 
 
@@ -97,12 +98,12 @@ pub const Player = struct {
 
     pub fn send_title(self : *const Player,
         comptime title_fmt : []const u8,
-        title_args : anytype,
+        title_args    : anytype,
         comptime subtitle_fmt : []const u8,
         subtitle_args : anytype,
-        fade_in_ms  : u64,
-        stay_ms     : u64,
-        fade_out_ms : u64
+        fade_in_ms    : Duration,
+        stay_ms       : Duration,
+        fade_out_ms   : Duration
     ) void {
         const title    = allocPrint(allocator, title_fmt,    title_args    ) catch panic("out of memory", .{});
         const subtitle = allocPrint(allocator, subtitle_fmt, subtitle_args ) catch panic("out of memory", .{});
@@ -110,9 +111,9 @@ pub const Player = struct {
             self.session_id,
             @intFromPtr(title.ptr), title.len,
             @intFromPtr(subtitle.ptr), subtitle.len,
-            @intCast(fade_in_ms / 50),
-            @intCast(stay_ms / 50),
-            @intCast(fade_out_ms / 50)
+            @intCast(fade_in_ms.as_ticks() / 50),
+            @intCast(stay_ms.as_ticks() / 50),
+            @intCast(fade_out_ms.as_ticks() / 50)
         );
         allocator.free(title);
         allocator.free(subtitle);
