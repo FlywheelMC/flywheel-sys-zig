@@ -8,6 +8,6 @@ pub const game = @import("game/mod.zig");
 
 pub const time = @import("time.zig");
 // TODO: rand
-// TODO: uuid
+pub const uuid = @import("uuid.zig");
 
 pub const log = @import("log.zig");

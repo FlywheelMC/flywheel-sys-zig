@@ -1,6 +1,7 @@
 const flywheel_sys = @import("flywheel-sys");
 const App    = flywheel_sys.App;
 const Player = flywheel_sys.game.Player;
+const uuid   = flywheel_sys.uuid;
 const info   = flywheel_sys.log.info;
 const pass   = flywheel_sys.log.pass;
 
@@ -27,10 +28,10 @@ fn player_joined(player : Player) void {
         defer profile.free();
 
         player.send_chat(
-            "<green>Hello, {s}!</green>\n <yellow>Your UUID is {}.",
+            "<green>Hello, {s}!</green>\n <yellow>Your UUID is {s}.",
             .{
                 profile.name.items,
-                profile.uuid
+                uuid.format(profile.uuid)
             }
         );
     }
