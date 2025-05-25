@@ -1,7 +1,7 @@
 const flywheel_sys = @import("flywheel-sys");
 const App    = flywheel_sys.App;
+const Uuid   = flywheel_sys.uuid.Uuid;
 const Player = flywheel_sys.game.Player;
-const uuid   = flywheel_sys.uuid;
 const info   = flywheel_sys.log.info;
 const pass   = flywheel_sys.log.pass;
 
@@ -31,7 +31,7 @@ fn player_joined(player : Player) void {
             "<green>Hello, {s}!</green>\n <yellow>Your UUID is {s}.",
             .{
                 profile.name.items,
-                uuid.format(profile.uuid)
+                profile.uuid.format(.lower)
             }
         );
     }

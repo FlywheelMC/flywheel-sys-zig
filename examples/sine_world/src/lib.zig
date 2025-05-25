@@ -3,6 +3,7 @@ const sin = @import("std").math.sin;
 const flywheel_sys = @import("flywheel-sys");
 const allocator = flywheel_sys.allocator;
 const App       = flywheel_sys.App;
+const Duration  = flywheel_sys.time.Duration;
 const Player    = flywheel_sys.game.Player;
 const BlockPos  = flywheel_sys.game.data.BlockPos;
 const ChunkPos  = flywheel_sys.game.data.ChunkPos;
@@ -28,7 +29,9 @@ fn player_joined(player : Player) void {
         player.send_title(
             "<orange><b><u>Sine World</></></>", .{},
             "<yellow>Welcome, {s}!</>", .{ profile.name.items },
-            0, 2500, 1000
+            Duration.ZERO,
+            Duration.from_ticks(50),
+            Duration.from_secs(1)
         );
     }
 }

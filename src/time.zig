@@ -34,7 +34,7 @@ pub const Duration = struct {
         }
     }
     inline fn new_unchecked(secs : u64, nanos : u32) Duration {
-        var data = mem.zeroes([@sizeOf(u64) + @sizeOf(u32)]u8);
+        var data = [_]u8{ 0 } ** (@sizeOf(u64) + @sizeOf(u32));
         mem.writeInt(u64, data[0..@sizeOf(u64)], secs, .little);
         mem.writeInt(u32, data[@sizeOf(u64)..], nanos, .little);
         return Duration { .private = data };
@@ -92,6 +92,9 @@ pub const Duration = struct {
     pub inline fn as_nanos(self : *const Duration) u128 {
         const secs = @as(u128, @intCast(self.as_secs())) * NANOS_PER_SEC;
         return secs + self.subsec_nanos();
+    }
+    pub inline fn as_ticks(self : *const Duration) u128 {
+        return self.as_millis() / 50;
     }
 
     pub inline fn abs_diff(self : *const Duration, other : Duration) Duration {

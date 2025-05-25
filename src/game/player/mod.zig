@@ -5,6 +5,7 @@ const allocPrint = std.fmt.allocPrint;
 const panic      = std.debug.panic;
 
 const allocator     = @import("../../internal/alloc.zig").allocator;
+const Uuid          = @import("../../uuid.zig").Uuid;
 const Duration      = @import("../../time.zig").Duration;
 const SoundCategory = @import("../data.zig").SoundCategory;
 
@@ -77,7 +78,7 @@ pub const Player = struct {
             const name_slice = @as([*]u8, @ptrFromInt(name_ptr))[0..name_len];
             const name       = ArrayList(u8).fromOwnedSlice(allocator, name_slice);
             return PlayerProfile {
-                .uuid = uuid,
+                .uuid = Uuid.from_u128_le(uuid),
                 .name = name
             };
         }
@@ -111,9 +112,9 @@ pub const Player = struct {
             self.session_id,
             @intFromPtr(title.ptr), title.len,
             @intFromPtr(subtitle.ptr), subtitle.len,
-            @intCast(fade_in_ms.as_ticks() / 50),
-            @intCast(stay_ms.as_ticks() / 50),
-            @intCast(fade_out_ms.as_ticks() / 50)
+            @intCast(fade_in_ms.as_ticks()),
+            @intCast(stay_ms.as_ticks()),
+            @intCast(fade_out_ms.as_ticks())
         );
         allocator.free(title);
         allocator.free(subtitle);

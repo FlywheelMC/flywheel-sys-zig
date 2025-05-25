@@ -76,7 +76,7 @@ pub const BatchSet = struct {
     pub fn submit(self : BatchSet) void {
         var data   = ArrayList(u8).init(default_allocator);
         defer data.deinit();
-        data.appendSlice(&mem.zeroes([@sizeOf(u32)]u8)) catch panic("out of memory", .{});
+        data.appendSlice(&[_]u8{ 0 } ** @sizeOf(u32)) catch panic("out of memory", .{});
 
         var count  = @as(u32, 0);
         var blocks = self.blocks.iterator();
@@ -84,8 +84,8 @@ pub const BatchSet = struct {
             const pos   = block_entry.key_ptr;
             const block = block_entry.value_ptr;
             count += 1;
-            var buf4 = mem.zeroes([@sizeOf(u32)]u8);
-            var buf8 = mem.zeroes([@sizeOf(u64)]u8);
+            var buf4 = [_]u8{ 0 } ** @sizeOf(u32);
+            var buf8 = [_]u8{ 0 } ** @sizeOf(u64);
             mem.writeInt(i64, &buf8, pos.x, .little);
             data.appendSlice(&buf8) catch panic("out of memory", .{});
             mem.writeInt(i64, &buf8, pos.y, .little);
